@@ -13,7 +13,7 @@ require('./models/ProductImage');
 require('./models/ProductOption');
 require('./models/ProductCategory');
 
-// Testar conexão e sincronizar
+// Testar conexão e sincronizar - sempre que rodar a aplicação o db vai ser dropado e criado novamente - force:true
 sequelize.sync({ force: true }).then(() => {
     console.log('Tabelas criadas com sucesso!');
     app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
