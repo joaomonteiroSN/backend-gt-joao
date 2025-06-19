@@ -17,6 +17,10 @@ require('./models/ProductCategory');
 const userRoutes = require('./routes/userRoutes');
 app.use(userRoutes);
 
+const categoryRoutes = require('./routes/categoryRoutes');
+app.use(categoryRoutes);
+
+
 // Testar conexão e sincronizar - sempre que rodar a aplicação o db vai ser dropado e criado novamente - force:true 
 sequelize.sync({ force: true }).then(() => {
     console.log('Tabelas criadas com sucesso!');

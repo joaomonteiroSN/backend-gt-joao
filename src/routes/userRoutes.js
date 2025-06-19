@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/UserController');
-const auteMiddleware = require('../middlewares/auteMiddleware');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 // GET usuário por ID
 router.get('/v1/user/:id', UserController.getUserById);
@@ -10,9 +10,9 @@ router.get('/v1/user/:id', UserController.getUserById);
 router.post('/v1/user', UserController.createUser);
 
 // PUT atualizar usuário (protegido)
-router.put('/v1/user/:id', auteMiddleware, UserController.updateUser);
+router.put('/v1/user/:id', authMiddleware, UserController.updateUser);
 
 // DELETE usuário (protegido)
-router.delete('/v1/user/:id', auteMiddleware, UserController.deleteUser);
+router.delete('/v1/user/:id', authMiddleware, UserController.deleteUser);
 
 module.exports = router;
