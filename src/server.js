@@ -1,17 +1,12 @@
 const express = require('express');
-const sequelize = require('./config/database');
-require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-// Importar os models
-require('./models/User');
-require('./models/Category');
-require('./models/Product');
-require('./models/ProductImage');
-require('./models/ProductOption');
-require('./models/ProductCategory');
+// Importar os models centralizados
+const db = require('./models');
 
 // Rotas
 const userRoutes = require('./routes/userRoutes');
@@ -20,9 +15,11 @@ app.use(userRoutes);
 const categoryRoutes = require('./routes/categoryRoutes');
 app.use(categoryRoutes);
 
+const productRoutes = require('./routes/productRoutes');
+app.use(productRoutes);
 
-// Testar conexão e sincronizar - sempre que rodar a aplicação o db vai ser dropado e criado novamente - force:true 
-sequelize.sync({ force: true }).then(() => {
+// Sincronizar banco de dados
+db.sequelize.sync({ force: true }).then(() => {
     console.log('Tabelas criadas com sucesso!');
     app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
 }).catch(err => {

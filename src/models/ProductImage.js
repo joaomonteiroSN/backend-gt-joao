@@ -1,19 +1,24 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-const Product = require('./Product');
+const { Model, DataTypes } = require('sequelize');
 
-const ProductImage = sequelize.define('ProductImage', {
-    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    product_id: {
-        type: DataTypes.INTEGER,
-        references: { model: Product, key: 'id' },
-        onDelete: 'CASCADE',
-    },
-    enabled: { type: DataTypes.BOOLEAN, defaultValue: false },
-    path: { type: DataTypes.STRING, allowNull: false },
-}, {
-    timestamps: true,
-    tableName: 'product_images',
-});
+class ProductImage extends Model {
+    static init(sequelize) {
+        return super.init({
+            path: DataTypes.STRING,
+            enabled: DataTypes.BOOLEAN
+        }, {
+            sequelize,
+            modelName: 'ProductImage',
+            tableName: 'product_images',
+            timestamps: true
+        });
+    }
+
+    static associate(models) {
+        this.belongsTo(models.Product, {
+            foreignKey: 'product_id',
+            as: 'product'
+        });
+    }
+}
 
 module.exports = ProductImage;

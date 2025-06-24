@@ -1,19 +1,42 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { Model, DataTypes } = require('sequelize');
 
-const Product = sequelize.define('Product', {
-    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    enabled: { type: DataTypes.BOOLEAN, defaultValue: false },
-    name: { type: DataTypes.STRING, allowNull: false },
-    slug: { type: DataTypes.STRING, allowNull: false },
-    use_in_menu: { type: DataTypes.BOOLEAN, defaultValue: false },
-    stock: { type: DataTypes.INTEGER, defaultValue: 0 },
-    description: { type: DataTypes.STRING },
-    price: { type: DataTypes.FLOAT, allowNull: false },
-    price_with_discount: { type: DataTypes.FLOAT, allowNull: false },
-}, {
-    timestamps: true,
-    tableName: 'products',
-});
+class Product extends Model {
+    static init(sequelize) {
+        return super.init({
+            enabled: DataTypes.BOOLEAN,
+            name: DataTypes.STRING,
+            slug: DataTypes.STRING,
+            stock: DataTypes.INTEGER,
+            description: DataTypes.TEXT,
+            price: DataTypes.FLOAT,
+            price_with_discount: DataTypes.FLOAT
+        }, {
+            sequelize,
+            modelName: 'Product',
+            tableName: 'products',
+            timestamps: true
+        });
+    }
+
+    static associate(models) {
+        this.belongsToMany(models.Category, {
+            through: 'product_categories',
+            foreignKey: 'product_id',
+            otherKey: 'category_id'
+        });
+
+        this.hasMany(models.ProductImage, {
+            foreignKey: 'product_id',
+            as: 'ProductImages'
+        });
+
+        this.hasMany(models.ProductOption, {
+            foreignKey: 'product_id',
+            as: 'ProductOptions'
+        });
+    }
+}
 
 module.exports = Product;
+
+
