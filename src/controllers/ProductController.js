@@ -166,6 +166,98 @@ module.exports = {
         }
     },
 
+    async update(req, res) {
+        try {
+            const { id } = req.params;
+            const {
+                enabled,
+                name,
+                slug,
+                stock,
+                description,
+                price,
+                price_with_discount,
+                category_ids,
+                images,
+                options
+            } = req.body;
+    
+            const product = await Product.findByPk(id);
+            if (!product) return res.status(404).json({ error: 'Produto não encontrado' });
+    
+            // Atualizar dados principais do produto
+            await product.update({
+                enabled,
+                name,
+                slug,
+                stock,
+                description,
+                price,
+                price_with_discount
+            });
+    
+            // Atualizar categorias
+            if (Array.isArray(category_ids)) {
+                await product.setCategories(category_ids);
+            }
+    
+            // Atualizar imagens
+            if (Array.isArray(images)) {
+                for (const image of images) {
+                    if (image.deleted && image.id) {
+                        await ProductImage.destroy({ where: { id: image.id, product_id: id } });
+                    } else if (image.id) {
+                        // Atualizar imagem existente (se houver novo conteúdo)
+                        if (image.content && !image.content.startsWith('http')) {
+                            const newPath = saveBase64Image(image.content, image.type);
+                            await ProductImage.update(
+                                { path: newPath },
+                                { where: { id: image.id, product_id: id } }
+                            );
+                        }
+                    } else if (image.content && image.type) {
+                        const newPath = saveBase64Image(image.content, image.type);
+                        await ProductImage.create({ product_id: id, enabled: true, path: newPath });
+                    }
+                }
+            }
+    
+            // Atualizar opções
+            if (Array.isArray(options)) {
+                for (const opt of options) {
+                    if (opt.deleted && opt.id) {
+                        await ProductOption.destroy({ where: { id: opt.id, product_id: id } });
+                    } else if (opt.id) {
+                        await ProductOption.update(
+                            {
+                                radius: opt.radius,
+                                shape: opt.shape,
+                                type: opt.type,
+                                title: opt.title,
+                                values: Array.isArray(opt.values) ? opt.values.join(',') : undefined
+                            },
+                            { where: { id: opt.id, product_id: id } }
+                        );
+                    } else {
+                        await ProductOption.create({
+                            product_id: id,
+                            title: opt.title,
+                            shape: opt.shape ?? 'square',
+                            radius: opt.radius ?? 0,
+                            type: opt.type ?? 'text',
+                            values: Array.isArray(opt.values) ? opt.values.join(',') : ''
+                        });
+                    }
+                }
+            }
+    
+            return res.status(204).send();
+        } catch (err) {
+            console.error(err);
+            return res.status(400).json({ error: 'Erro ao atualizar produto' });
+        }
+    },    
+
     async remove(req, res) {
         const { id } = req.params;
 
