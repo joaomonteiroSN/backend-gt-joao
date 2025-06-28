@@ -2,8 +2,16 @@ const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./src/docs/swagger.yaml');
+
+
+
 const app = express();
 app.use(express.json());
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Importar os models centralizados
 const db = require('./models');

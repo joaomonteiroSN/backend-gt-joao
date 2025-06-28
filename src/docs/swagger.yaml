@@ -1,0 +1,347 @@
+openapi: 3.0.0
+info:
+  title: Backend GT API
+  version: 1.0.0
+  description: Documentação da API do sistema CRUD com Swagger
+
+servers:
+  - url: http://localhost:3000/v1
+    description: Ambiente de desenvolvimento local
+
+tags:
+  - name: User
+    description: Endpoints relacionados ao usuário
+  - name: Category
+    description: Endpoints relacionados à categoria
+  - name: Product
+    description: Endpoints relacionados ao produto
+
+paths:
+  /user:
+    post:
+      tags: [User]
+      summary: Criar novo usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        201:
+          description: Usuário criado com sucesso
+
+  /user/{id}:
+    get:
+      tags: [User]
+      summary: Buscar usuário por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Usuário retornado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    put:
+      tags: [User]
+      summary: Atualizar usuário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        204:
+          description: Usuário atualizado com sucesso
+
+    delete:
+      tags: [User]
+      summary: Deletar usuário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        204:
+          description: Usuário deletado
+
+  /category/search:
+    get:
+      tags: [Category]
+      summary: Listar categorias
+      responses:
+        200:
+          description: Lista de categorias
+
+  /category:
+    post:
+      tags: [Category]
+      summary: Criar categoria
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        201:
+          description: Categoria criada
+
+  /category/{id}:
+    get:
+      tags: [Category]
+      summary: Buscar categoria por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Categoria encontrada
+
+    put:
+      tags: [Category]
+      summary: Atualizar categoria
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        204:
+          description: Categoria atualizada
+
+    delete:
+      tags: [Category]
+      summary: Deletar categoria
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        204:
+          description: Categoria deletada
+
+  /product/search:
+    get:
+      tags: [Product]
+      summary: Buscar produtos com filtros
+      responses:
+        200:
+          description: Lista de produtos
+
+    delete:
+      tags: [Product]
+      summary: Remover produto
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        204:
+          description: Produto removido
+
+  /product:
+    post:
+      tags: [Product]
+      summary: Criar produto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductCreate'
+      responses:
+        201:
+          description: Produto criado
+
+  /product/{id}:
+    get:
+      tags: [Product]
+      summary: Buscar produto por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Produto retornado com sucesso
+
+    put:
+      tags: [Product]
+      summary: Atualizar produto
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductUpdate'
+      responses:
+        204:
+          description: Produto atualizado
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstname:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+
+    UserCreate:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          required: [password, confirmPassword]
+          properties:
+            password:
+              type: string
+            confirmPassword:
+              type: string
+
+    UserUpdate:
+      type: object
+      properties:
+        firstname:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+
+    Category:
+      type: object
+      required: [name, slug]
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        use_in_menu:
+          type: boolean
+
+    ProductCreate:
+      type: object
+      required: [name, slug, price, price_with_discount, category_ids]
+      properties:
+        enabled:
+          type: boolean
+        name:
+          type: string
+        slug:
+          type: string
+        stock:
+          type: integer
+        description:
+          type: string
+        price:
+          type: number
+        price_with_discount:
+          type: number
+        category_ids:
+          type: array
+          items:
+            type: integer
+        images:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              content:
+                type: string
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              shape:
+                type: string
+              radius:
+                type: string
+              type:
+                type: string
+              values:
+                type: array
+                items:
+                  type: string
+
+    ProductUpdate:
+      allOf:
+        - $ref: '#/components/schemas/ProductCreate'
+        - type: object
+          properties:
+            images:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  deleted:
+                    type: boolean
+                  content:
+                    type: string
+            options:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  deleted:
+                    type: boolean
+                  title:
+                    type: string
+                  shape:
+                    type: string
+                  radius:
+                    type: string
+                  type:
+                    type: string
+                  values:
+                    type: array
+                    items:
+                      type: string
