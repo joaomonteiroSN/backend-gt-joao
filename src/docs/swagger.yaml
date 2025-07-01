@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Backend GT API
   version: 1.0.0
-  description: Documentação da API do sistema CRUD com Swagger
+  description: Documentação do projeto final de backend do geração tech
 
 servers:
   - url: http://localhost:3000/v1

@@ -1,11 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const sequelize = require('../config/database'); // ✅ usa a instância pronta
+const sequelize = require('../config/database'); 
 const Sequelize = require('sequelize');
 
 const db = {};
 
-// Lê todos os arquivos da pasta models, exceto o próprio index.js
 fs.readdirSync(__dirname)
   .filter(file => file !== 'index.js' && file.endsWith('.js'))
   .forEach(file => {
@@ -18,7 +17,6 @@ fs.readdirSync(__dirname)
     }
   });
 
-// Associa os modelos entre si, se tiverem método associate
 Object.values(db).forEach(model => {
   if (typeof model.associate === 'function') {
     model.associate(db);

@@ -16,9 +16,8 @@ class User extends Model {
         });
     }
 
-    // Aqui você pode adicionar associações no método estático associate, se precisar
     static associate(models) {
-        // exemplo: this.hasMany(models.Order, { foreignKey: 'user_id' });
+        //Não é necessário associar aqui
     }
 }
 

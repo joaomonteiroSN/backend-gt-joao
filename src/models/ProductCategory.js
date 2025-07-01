@@ -20,7 +20,7 @@ class ProductCategory extends Model {
     }
 
     static associate(models) {
-        // Não é necessário associar diretamente aqui, pois o relacionamento é feito em Product e Category
+        // Não é necessário associar aqui
     }
 }
 
